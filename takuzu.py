@@ -19,7 +19,7 @@ from search import (
 
 
 class TakuzuState:
-    state_id = 20
+    state_id = 0
 
     def __init__(self, board):
         self.board = board
