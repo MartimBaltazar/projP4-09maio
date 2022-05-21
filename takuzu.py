@@ -5,6 +5,7 @@
 # Grupo 00:
 # 00000 Nome1
 # 00000 Nome2
+from sys import stdin
 
 import sys
 from search import (
@@ -43,6 +44,15 @@ class Board:
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
+        if (row-1 < 0):
+            vertical1 = board[row-1][col]
+        else: 
+            vertical1 = None
+        if (row+1 > len(board)):
+            vertical2 = board[row+1][col]
+        else:
+            vertical2 = None
+        return (vertical1,vertical2)
         # TODO
         pass
 
@@ -63,6 +73,38 @@ class Board:
             > from sys import stdin
             > stdin.readline()
         """
+        board_list =[]
+        boardstate = TakuzuState('')
+        number = int(stdin.readline())
+        number1 = number
+        
+        while (number1 != 0):
+            line = stdin.readline()
+            line_split = line.split(" ")
+            board_list.append(line_split)
+            number1 -= 1
+        
+        for a in range(0,number):
+            for b in range(0,number):
+                if board_list[a][b] == '2':
+                    if b == 0:
+                        boardstate.board = boardstate.board + '2 '
+                    else:
+                        boardstate.board = boardstate.board + ' 2 '
+                elif board_list[a][b] == '1':
+                    if b == 0:
+                        boardstate.board = boardstate.board + '1 '
+                    else:
+                        boardstate.board = boardstate.board + ' 1 '
+                else:
+                    if b == 0:
+                        boardstate.board = boardstate.board + '0 '
+                    else:
+                        boardstate.board = boardstate.board + ' 0 '
+            boardstate.board = boardstate.board + '\n'
+                             
+        return boardstate.board
+        
         # TODO
         pass
 
@@ -110,4 +152,8 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
+    
+    board = Board.parse_instance_from_stdin() 
+    print("Initial:\n", board, sep="")
+    print(board.adjacent_vertical_numbers(1, 1))
     pass
