@@ -80,28 +80,18 @@ class Board:
         
         while (number1 != 0):
             line = stdin.readline()
-            line_split = line.split(" ")
+            line_split = line.split("   ")
+            print(line_split)
             board_list.append(line_split)
             number1 -= 1
+            
         
         for a in range(0,number):
             for b in range(0,number):
-                if board_list[a][b] == '2':
-                    if b == 0:
-                        boardstate.board = boardstate.board + '2 '
-                    else:
-                        boardstate.board = boardstate.board + ' 2 '
-                elif board_list[a][b] == '1':
-                    if b == 0:
-                        boardstate.board = boardstate.board + '1 '
-                    else:
-                        boardstate.board = boardstate.board + ' 1 '
+                if 0 <= b < (number-1):
+                    boardstate.board = boardstate.board +  str(board_list[a][b]) + ' '          
                 else:
-                    if b == 0:
-                        boardstate.board = boardstate.board + '0 '
-                    else:
-                        boardstate.board = boardstate.board + ' 0 '
-            boardstate.board = boardstate.board + '\n'
+                    boardstate.board = boardstate.board + str(board_list[a][b])
                              
         return boardstate.board
         
