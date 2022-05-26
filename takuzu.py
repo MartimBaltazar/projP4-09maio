@@ -36,29 +36,43 @@ class TakuzuState:
 class Board:
     """Representação interna de um tabuleiro de Takuzu."""
 
+    def __init__(self,board,lst):
+        self.board_str = board
+        self.board_lst = lst 
+
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        # TODO
+        return board.board_lst[row][col]
         pass
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        if (row-1 < 0):
-            vertical1 = board[row-1][col]
-        else: 
-            vertical1 = None
-        if (row+1 > len(board)):
-            vertical2 = board[row+1][col]
+        if (row+1 == len(board.board_lst)):
+            vertical_below = None
         else:
-            vertical2 = None
-        return (vertical1,vertical2)
-        # TODO
+            vertical_below = int(board.board_lst[row+1][col])
+            
+        if (row != 0):
+            vertical_above = int(board.board_lst[row-1][col])
+        else: 
+            vertical_above = None
+        return (vertical_below,vertical_above)
         pass
 
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
+        if (col+1 == len(board.board_lst)):
+            column_right = None
+        else:
+            column_right = int(board.board_lst[row][col+1])
+            
+        if (col != 0):
+            column_left = int(board.board_lst[row][col-1])
+        else: 
+            column_left = None
+        return (column_left,column_right)
         # TODO
         pass
 
@@ -74,7 +88,7 @@ class Board:
             > stdin.readline()
         """
         board_list =[]
-        boardstate = TakuzuState('')
+        boardstate = Board('',board_list)
         number = int(stdin.readline())
         number1 = number
         
@@ -89,14 +103,15 @@ class Board:
         for a in range(0,number):
             for b in range(0,number):
                 if 0 <= b < (number-1):
-                    boardstate.board = boardstate.board +  str(board_list[a][b]) + ' '          
+                    boardstate.board_str = boardstate.board_str +  board_list[a][b] + ' '          
                 else:
-                    boardstate.board = boardstate.board + str(board_list[a][b])
-                             
-        return boardstate.board
+                    boardstate.board_str = boardstate.board_str + board_list[a][b]
+        return boardstate
         
         # TODO
         pass
+    def __str__ (self):
+        return str(self.board_str)
 
     # TODO: outros metodos da classe
 
@@ -145,5 +160,14 @@ if __name__ == "__main__":
     
     board = Board.parse_instance_from_stdin() 
     print("Initial:\n", board, sep="")
+
+    problem = Takuzu(board)
+    initial_state = TakuzuState(board)
+    # Mostrar valor na posição (2, 2):
+    print(initial_state.board.get_number(2, 2)) 
+    print(board.adjacent_vertical_numbers(3, 3))
+    print(board.adjacent_horizontal_numbers(3, 3))
     print(board.adjacent_vertical_numbers(1, 1))
+    print(board.adjacent_horizontal_numbers(1, 1))
+
     pass
