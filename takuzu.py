@@ -8,6 +8,8 @@
 from sys import stdin
 
 import sys
+
+from numpy import append
 from search import (
     Problem,
     Node,
@@ -73,8 +75,40 @@ class Board:
         else: 
             column_left = None
         return (column_left,column_right)
-        # TODO
         pass
+
+    def possible_actions(self, row: int, col:int,number:int) -> [(int,int,int)]:
+        """Decide se uma ação é válida num determinado board"""
+        
+
+        if (self.adjacent_horizontal_numbers(row,col) == (number,number)):
+            print("",row,col)
+            print("pass1")
+            return None
+
+        if (self.adjacent_vertical_numbers(row,col)[0] == number 
+        and self.adjacent_vertical_numbers(row,col)[1] == number):
+            print("pass2")
+            return None
+
+        n = len(board.board_lst)
+        if (n % 2) == 0:
+            lim = n // 2
+        else:
+            lim = (n // 2) + 1
+
+        #print("LIM: ",lim)
+        # Verificar se pode "number"
+        counter = 0
+        for a in range(0,n):
+            if board.board_lst[row][a] == str(number):
+                counter += 1
+        #print("COUNT: ",counter)
+        if (counter < lim):
+            return (row,col,number)
+        pass
+            
+    pass
 
     @staticmethod
     def parse_instance_from_stdin():
@@ -107,8 +141,6 @@ class Board:
                 else:
                     boardstate.board_str = boardstate.board_str + board_list[a][b]
         return boardstate
-        
-        # TODO
         pass
     def __str__ (self):
         return str(self.board_str)
@@ -119,13 +151,31 @@ class Board:
 class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
+        self.board = board
         # TODO
+
         pass
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
+        actions = []
+        size = len(state.board.board_lst)
+        for a in range(0,size):
+            for b in range(0,size):
+
+                if state.board.get_number(a,b) == "2" or state.board.board_lst[a][b] == "2\n":
+                    if (state.board.possible_actions(a,b,0)) != None:
+                        actions.append(state.board.possible_actions(a,b,0))
+                    if (state.board.possible_actions(a,b,1)) != None:
+                        actions.append(state.board.possible_actions(a,b,1))
+                    #actions.append(state.board.row_actions(a,b,0))
+                    #actions.append(state.board.row_actions(a,b,1))
+                    #actions.append((a,b,0))
+                    #actions.append((a,b,1))
         # TODO
+
+        print(actions)
         pass
 
     def result(self, state: TakuzuState, action):
@@ -162,12 +212,14 @@ if __name__ == "__main__":
     print("Initial:\n", board, sep="")
 
     problem = Takuzu(board)
-    initial_state = TakuzuState(board)
-    # Mostrar valor na posição (2, 2):
-    print(initial_state.board.get_number(2, 2)) 
     print(board.adjacent_vertical_numbers(3, 3))
-    print(board.adjacent_horizontal_numbers(3, 3))
-    print(board.adjacent_vertical_numbers(1, 1))
-    print(board.adjacent_horizontal_numbers(1, 1))
+    initial_state = TakuzuState(board)
+    problem.actions(initial_state)
+    # Mostrar valor na posição (2, 2):
+    #print(initial_state.board.get_number(2, 2)) 
+    
+    #print(board.adjacent_horizontal_numbers(3, 3))
+    #print(board.adjacent_vertical_numbers(1, 1))
+    #print(board.adjacent_horizontal_numbers(1, 1))
 
     pass
