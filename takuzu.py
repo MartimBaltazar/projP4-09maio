@@ -80,34 +80,72 @@ class Board:
     def possible_actions(self, row: int, col:int,number:int) -> [(int,int,int)]:
         """Decide se uma ação é válida num determinado board"""
         
-
+        # Verifica se horizontais sao iguais
         if (self.adjacent_horizontal_numbers(row,col) == (number,number)):
-            print("",row,col)
-            print("pass1")
+            print("pass Linhas:",(row,col,number))
             return None
 
-        if (self.adjacent_vertical_numbers(row,col)[0] == number 
-        and self.adjacent_vertical_numbers(row,col)[1] == number):
-            print("pass2")
+        # Verifica se verticais sao iguais
+        if (self.adjacent_vertical_numbers(row,col) == (number,number)):
+            print("pass Coluna:",(row,col,number))
             return None
+
+        # Verifica duas filas para cima
+        if (row > 2):
+            if (number == int(self.get_number(row-1,col)) 
+            and number == int(self.get_number(row-2,col))):
+                print("row,col: ",row,col)
+                print((row,col,number))
+                return None
+
+        # Verifica duas filas para baixo
+        if (row <= len(self.board_lst)-2):
+            if (number == int(self.get_number(row+1,col)) 
+            and number == int(self.get_number(row+2,col))):
+                print("row,col: ",row,col)
+                print((row,col,number))
+                return None
+        
+        # Verifica duas colunas à esquerda
+        if(col > 2):
+            if (number == int(self.get_number(row,col-1)) 
+            and number == int(self.get_number(row,col-2))):
+                print("row,col: ",row,col)
+                print((row,col,number))
+                return None
+
+        # Verifica duas colunas à direita
+        if (col <= len(self.board_lst)-2):
+            if (number == int(self.get_number(row,col+1)) 
+            and number == int(self.get_number(row,col+2))):
+                print("row,col: ",row,col)
+                print((row,col,number))
+                return None
 
         n = len(board.board_lst)
+        #print("N: ",n)
         if (n % 2) == 0:
             lim = n // 2
         else:
             lim = (n // 2) + 1
 
-        #print("LIM: ",lim)
-        # Verificar se pode "number"
+        # Verificar se pode "number" na linha
         counter = 0
         for a in range(0,n):
             if board.board_lst[row][a] == str(number):
                 counter += 1
-        #print("COUNT: ",counter)
-        if (counter < lim):
-            return (row,col,number)
-        pass
-            
+        if (counter >= lim):
+            return None
+
+        # Verificar se pode "number" na coluna
+        counter = 0
+        for a in range(0,n):
+            if board.board_lst[a][col] == str(number):
+                counter += 1
+        if (counter >= lim):
+            return None
+
+        return (row,col,number)  
     pass
 
     @staticmethod
