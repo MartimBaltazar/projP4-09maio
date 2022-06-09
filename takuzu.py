@@ -5,6 +5,7 @@
 # Grupo 31:
 # 99280 Martim Baltazar
 # 99344 Vasco Simões
+from copy import deepcopy
 from sys import stdin
 
 import sys
@@ -16,6 +17,7 @@ from search import (
     astar_search,
     breadth_first_tree_search,
     depth_first_tree_search,
+    depth_limited_search,
     greedy_search,
     recursive_best_first_search,
 )
@@ -126,8 +128,8 @@ class Board:
                 if (number != int(self.get_number(row,col))):
                     counter += 1
         if (counter >= lim):
-            print("C:",counter)
-            print("NONE: ")
+            #print("C:",counter)
+            #print("NONE: ")
             return None
 
         # Verificar se pode "number" na coluna
@@ -137,8 +139,8 @@ class Board:
                 if (number != int(self.get_number(row,col))):
                     counter += 1
         if (counter >= lim):
-            print("C:",counter)
-            print("NONEcoluna: ")
+           # print("C:",counter)
+            #print("NONEcoluna: ")
             return None
 
         return (row,col,number)  
@@ -185,9 +187,9 @@ class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         self.board = board
+        #super().__init__(TakuzuState.state_id)
+        self.initial = TakuzuState(board)
         # TODO
-
-        pass
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
@@ -203,7 +205,7 @@ class Takuzu(Problem):
                     if (state.board.possible_actions(a,b,1)) != None:
                         actions.append(state.board.possible_actions(a,b,1))
         # TODO
-        print(actions)
+        #print(actions)
         return actions
         pass
 
@@ -212,13 +214,29 @@ class Takuzu(Problem):
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        state.board.board_lst[action[0]][action[1]] = action[2]
-        size = len(state.board.board_lst)
+        board = deepcopy(state.board)
 
-        str_list = list(state.board.board_str)
+        print(board.board_lst)
+        print(board.board_str)
+
+        board.board_lst[action[0]][action[1]] = action[2]
+        size = len(board.board_lst)
+
+        print("resulta")
+
+        str_list = list(board.board_str)
         str_list[action[0]*2*size+action[1]*2] = str(action[2])
         new_board_str="".join(str_list)
-        state.board.board_str = new_board_str
+        board.board_str = new_board_str
+
+        print("antes de alt: ",state.board)
+
+        state.board = board
+        print("antes de ret: ",board.board_lst)
+        print("antes de ret: ",board.board_str)
+        print("antes de ret: ",state.board)
+
+       # state.board = board
         
         #print("\n")
         #print(state.board.board_str,"\n")
@@ -231,10 +249,16 @@ class Takuzu(Problem):
         estão preenchidas com uma sequência de números adjacentes."""
         size = len(state.board.board_lst)
         for a in range(0,size):
-           for b in range(0,size):
-                #print(a,b)
-                if (state.board.possible_actions(a,b,int(state.board.get_number(a,b))) == None):
+            for b in range(0,size):
+                print("state...",state.board.get_number(a,b))
+                if state.board.get_number(a,b) == "2" or state.board.get_number(a,b) == "2\n":
+                    print("Foi aqui 1")
                     return False
+                    #print(state.board.possible_actions(a,b,int(state.board.get_number(a,b))))
+                if (state.board.possible_actions(a,b,int(state.board.get_number(a,b))) == None):
+                    print("Foi aqui 2")
+                    return False
+        print("terminou")
         return True
                 
                         
@@ -255,24 +279,65 @@ if __name__ == "__main__":
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
     
-    board = Board.parse_instance_from_stdin() 
-    print("Initial:\n", board, sep="")
-    problem = Takuzu(board)
-    s0 = TakuzuState(board)
-    #problem.actions(initial_state)  
-    #print(initial_state.id)
+    #board = Board.parse_instance_from_stdin()
+    #board.get_number(1,1)
+
+    exemplo = 4
+
+    if (exemplo == 1):
+        board = Board.parse_instance_from_stdin()
+        print("Initial:\n", board, sep="")
+        # Imprimir valores adjacentes
+        print(board.adjacent_vertical_numbers(3, 3))
+        print(board.adjacent_horizontal_numbers(3, 3))
+        print(board.adjacent_vertical_numbers(1, 1))
+        print(board.adjacent_horizontal_numbers(1, 1))
     
-    s1 = problem.result(s0, (0, 0, 0))
-    s2 = problem.result(s1, (0, 2, 1))
-    s3 = problem.result(s2, (1, 0, 1))
-    s4 = problem.result(s3, (1, 1, 0))
-    s5 = problem.result(s4, (1, 3, 1))
-    s6 = problem.result(s5, (2, 0, 0))
-    s7 = problem.result(s6, (2, 2, 1))
-    s8 = problem.result(s7, (2, 3, 1))
-    s9 = problem.result(s8, (3, 2, 0))
-    # Verificar se foi atingida a solução
-    print("Is goal?", problem.goal_test(s9))    
-    print("Solution:\n", s9.board, sep="")
+    if (exemplo == 2):
+        board = Board.parse_instance_from_stdin()
+        print("Initial:\n", board, sep="")
+        # Criar uma instância de Takuzu:
+        problem = Takuzu(board)
+        # Criar um estado com a configuração inicial:
+        initial_state = TakuzuState(board)
+        # Mostrar valor na posição (2, 2):
+        print(initial_state.board.get_number(2, 2))
+        # Realizar acção de inserir o número 1 na posição linha 2 e coluna 2
+        result_state = problem.result(initial_state, (2, 2, 1))
+        # Mostrar valor na posição (2, 2):
+        print(result_state.board.get_number(2, 2))
+    
+    if (exemplo == 3):
+        board = Board.parse_instance_from_stdin()
+        # Criar uma instância de Takuzu:
+        problem = Takuzu(board)
+        # Criar um estado com a configuração inicial:
+        s0 = TakuzuState(board)
+        print("Initial:\n", s0.board, sep="")
+        # Aplicar as ações que resolvem a instância
+        s1 = problem.result(s0, (0, 0, 0))
+        s2 = problem.result(s1, (0, 2, 1))
+        s3 = problem.result(s2, (1, 0, 1))
+        s4 = problem.result(s3, (1, 1, 0))
+        s5 = problem.result(s4, (1, 3, 1))
+        s6 = problem.result(s5, (2, 0, 0))
+        s7 = problem.result(s6, (2, 2, 1))
+        s8 = problem.result(s7, (2, 3, 1))
+        s9 = problem.result(s8, (3, 2, 0))
+        # Verificar se foi atingida a solução
+        print("Is goal?", problem.goal_test(s9))
+        print("Solution:\n", s9.board, sep="")
+    
+    if (exemplo == 4):
+        board = Board.parse_instance_from_stdin()
+        # Criar uma instância de Takuzu:
+        problem = Takuzu(board)
+        # Obter o nó solução usando a procura em profundidade:
+        goal_node = depth_first_tree_search(problem)
+        
+        print(goal_node)
+        # Verificar se foi atingida a solução
+        print("Is goal?", problem.goal_test(goal_node.state))
+        print("Solution:\n", goal_node.state.board, sep="")
 
     pass
