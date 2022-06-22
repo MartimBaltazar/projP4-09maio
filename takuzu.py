@@ -46,19 +46,19 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        return board.board_lst[row][col]
+        return self.board_lst[row][col]
         pass
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        if (row+1 == len(board.board_lst)):
+        if (row+1 == len(self.board_lst)):
             vertical_below = None
         else:
-            vertical_below = int(board.board_lst[row+1][col])
+            vertical_below = int(self.board_lst[row+1][col])
             
         if (row != 0):
-            vertical_above = int(board.board_lst[row-1][col])
+            vertical_above = int(self.board_lst[row-1][col])
         else: 
             vertical_above = None
         return (vertical_below,vertical_above)
@@ -67,13 +67,13 @@ class Board:
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        if (col+1 == len(board.board_lst)):
+        if (col+1 == len(self.board_lst)):
             column_right = None
         else:
-            column_right = int(board.board_lst[row][col+1])
+            column_right = int(self.board_lst[row][col+1])
             
         if (col != 0):
-            column_left = int(board.board_lst[row][col-1])
+            column_left = int(self.board_lst[row][col-1])
         else: 
             column_left = None
         return (column_left,column_right)
@@ -83,6 +83,7 @@ class Board:
         """Decide se uma ação é válida num determinado board"""
         
         # Verifica se horizontais sao iguais
+        #print("adj,hor:",self.adjacent_horizontal_numbers(row,col))
         if (self.adjacent_horizontal_numbers(row,col) == (number,number)):
             return None
 
@@ -162,9 +163,11 @@ class Board:
         number = int(stdin.readline())
         number1 = number
         
+        #print(number1)
+
         while (number1 != 0):
             line = stdin.readline()
-            line_split = line.split("   ")
+            line_split = line.split("\t")
             board_list.append(line_split)
             number1 -= 1
             
@@ -172,6 +175,8 @@ class Board:
         for a in range(0,number):
             for b in range(0,number):
                 if 0 <= b < (number-1):
+                    #print("a: ",a,"b: ",b)
+                    #print("bl: ",board_list)
                     boardstate.board_str = boardstate.board_str +  board_list[a][b] + ' '          
                 else:
                     boardstate.board_str = boardstate.board_str + board_list[a][b]
@@ -199,6 +204,7 @@ class Takuzu(Problem):
         for a in range(0,size):
             for b in range(0,size):
 
+
                 if state.board.get_number(a,b) == "2" or state.board.board_lst[a][b] == "2\n":
                     if (state.board.possible_actions(a,b,0)) != None:
                         actions.append(state.board.possible_actions(a,b,0))
@@ -216,30 +222,36 @@ class Takuzu(Problem):
         self.actions(state)."""
         board = deepcopy(state.board)
 
-        print(board.board_lst)
-        print(board.board_str)
+        #print(board.board_lst)
+        #print(board.board_str)
 
         board.board_lst[action[0]][action[1]] = action[2]
         size = len(board.board_lst)
 
-        print("resulta")
+        #print("resulta")
 
         str_list = list(board.board_str)
         str_list[action[0]*2*size+action[1]*2] = str(action[2])
         new_board_str="".join(str_list)
         board.board_str = new_board_str
 
-        print("antes de alt: ",state.board)
+        #print("antes de alt: ",state.board)
 
         state.board = board
-        print("antes de ret: ",board.board_lst)
-        print("antes de ret: ",board.board_str)
-        print("antes de ret: ",state.board)
+        #print("antes de ret: ",board.board_lst)
+        #print("antes de ret: ",board.board_str)
+        #print("antes de ret: ",state.board)
 
        # state.board = board
         
         #print("\n")
         #print(state.board.board_str,"\n")
+
+        #######################
+
+        result_board = deepcopy(state.board)
+
+
         return TakuzuState(board)
         pass
 
@@ -250,13 +262,23 @@ class Takuzu(Problem):
         size = len(state.board.board_lst)
         for a in range(0,size):
             for b in range(0,size):
-                print("state...",state.board.get_number(a,b))
-                if state.board.get_number(a,b) == "2" or state.board.get_number(a,b) == "2\n":
-                    print("Foi aqui 1")
+                #print("state...",state.board.get_number(a,b))
+                #print("STATE:BOARD\n",state.board,)
+                #print
+                if state.board.board_lst[a][b] == "2" or state.board.board_lst[a][b] == "2\n":
+                    #print("get number",state.board.get_number(a,b))
+                    #print("STATE:BOARD:DENTRO\n",state.board)
+                    #print("STATE:BOARD:LIST\n",state.board.board_lst[0][0])
+                    #print("A: ",a,"B: ",b)
+                    #print("Foi aqui 1")
                     return False
                     #print(state.board.possible_actions(a,b,int(state.board.get_number(a,b))))
-                if (state.board.possible_actions(a,b,int(state.board.get_number(a,b))) == None):
-                    print("Foi aqui 2")
+                #print("res: ",state.board.possible_actions(a,b,int(state.board.board_lst[a][b])))
+                
+                #print(state.board)
+                if (state.board.possible_actions(a,b,int(state.board.board_lst[a][b])) == None):
+                    
+                    #print("Foi aqui 2")
                     return False
         print("terminou")
         return True
@@ -335,7 +357,7 @@ if __name__ == "__main__":
         # Obter o nó solução usando a procura em profundidade:
         goal_node = depth_first_tree_search(problem)
         
-        print(goal_node)
+        #print(goal_node)
         # Verificar se foi atingida a solução
         print("Is goal?", problem.goal_test(goal_node.state))
         print("Solution:\n", goal_node.state.board, sep="")
