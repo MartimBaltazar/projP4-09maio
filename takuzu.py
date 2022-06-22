@@ -122,26 +122,23 @@ class Board:
             and number == int(self.get_number(row,col+2))):
                 return None
 
-        # Verificar se pode "number" na linha
-        counter = 0
+        
+
+        counter = 1
         for a in range(0,n):
-            if board.board_lst[row][a] == str(number):
-                if (number != int(self.get_number(row,col))):
+            if int(self.board_lst[row][a]) == number:
+                if (a != col):
                     counter += 1
-        if (counter >= lim):
-            #print("C:",counter)
-            #print("NONE: ")
+        if (counter > lim):
             return None
 
         # Verificar se pode "number" na coluna
-        counter = 0
+        counter = 1
         for a in range(0,n):
-            if board.board_lst[a][col] == str(number):
-                if (number != int(self.get_number(row,col))):
+            if int(self.board_lst[a][col]) == number:
+                if (a != row):
                     counter += 1
-        if (counter >= lim):
-           # print("C:",counter)
-            #print("NONEcoluna: ")
+        if (counter > lim):
             return None
 
         return (row,col,number)  
@@ -177,7 +174,7 @@ class Board:
                 if 0 <= b < (number-1):
                     #print("a: ",a,"b: ",b)
                     #print("bl: ",board_list)
-                    boardstate.board_str = boardstate.board_str +  board_list[a][b] + ' '          
+                    boardstate.board_str = boardstate.board_str +  board_list[a][b] + '\t'          
                 else:
                     boardstate.board_str = boardstate.board_str + board_list[a][b]
         return boardstate
@@ -280,7 +277,7 @@ class Takuzu(Problem):
                     
                     #print("Foi aqui 2")
                     return False
-        print("terminou")
+        #print("terminou")
         return True
                 
                         
@@ -322,6 +319,9 @@ if __name__ == "__main__":
         problem = Takuzu(board)
         # Criar um estado com a configuração inicial:
         initial_state = TakuzuState(board)
+
+        
+
         # Mostrar valor na posição (2, 2):
         print(initial_state.board.get_number(2, 2))
         # Realizar acção de inserir o número 1 na posição linha 2 e coluna 2
@@ -354,12 +354,21 @@ if __name__ == "__main__":
         board = Board.parse_instance_from_stdin()
         # Criar uma instância de Takuzu:
         problem = Takuzu(board)
+
+        #for a in range(0,4):
+            #for b in range(0,4):
+                #print(board.possible_actions(a,b,1))
+
         # Obter o nó solução usando a procura em profundidade:
         goal_node = depth_first_tree_search(problem)
         
         #print(goal_node)
         # Verificar se foi atingida a solução
-        print("Is goal?", problem.goal_test(goal_node.state))
-        print("Solution:\n", goal_node.state.board, sep="")
+        #print("Is goal?", problem.goal_test(goal_node.state))
+        #print("Solution:\n", goal_node.state.board, sep="")
+
+        problem.goal_test(goal_node.state)
+        print(goal_node.state.board, end="")
+
 
     pass
