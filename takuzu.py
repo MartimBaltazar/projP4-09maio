@@ -114,29 +114,30 @@ class Board:
 
         if (n % 2) != 0:
             var = -1
+            lim+=1
 
         # Verifica duas filas para cima
-        if (row > 2):
+        if (row >= 2):
             if (number == int(self.get_number(row-1,col)) 
             and number == int(self.get_number(row-2,col))):
                 return None
 
         # Verifica duas filas para baixo
-        if (row < n-2+var):
+        if (row <= n-3):
             if (number == int(self.get_number(row+1,col)) 
             and number == int(self.get_number(row+2,col))):
                 return None
         
         # Verifica duas colunas à esquerda
-        if(col > 2):
+        if(col >= 2):
             if (number == int(self.get_number(row,col-1)) 
-            and number == int(self.get_number(row,col-2))):
+            and number == int(self.get_number(row,col-2))):         
                 return None
 
         # Verifica duas colunas à direita
-        if (col < n-2+var):
+        if (col <= n-3):
             if (number == int(self.get_number(row,col+1)) 
-            and number == int(self.get_number(row,col+2))):
+            and number == int(self.get_number(row,col+2))):  
                 return None
 
         
@@ -157,6 +158,7 @@ class Board:
                     counter += 1
         if (counter > lim):
             return None
+
 
         return (row,col,number)  
     pass
@@ -268,7 +270,7 @@ class Board:
         while (number1 != 0):
             line = stdin.readline()
             line_split = line.split("\t")
-            board_list.append(line_split)
+            board_list.append((line_split))
             number1 -= 1
             
         
@@ -278,6 +280,7 @@ class Board:
                     boardstate.board_str = boardstate.board_str +  board_list[a][b] + '\t'          
                 else:
                     boardstate.board_str = boardstate.board_str + board_list[a][b]
+                board_list[a][b] = int(board_list[a][b])
         return boardstate
         pass
     def __str__ (self):
@@ -315,1457 +318,1339 @@ class Takuzu(Problem):
         self.board.num_pos_livres = counter
         print("pos livres: ",counter)
 
-        twoCheck = False
         while (counter > 0):
-            condFlag = False
-            if (self.get_key(self.board.adj_horizontais,[0,0]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_horizontais,[0,0])
-                print(pos)
-                # (2,2)
+            good_action = False
+            if (good_action == False):
+                if (self.get_key(self.board.adj_horizontais,[0,0]) != None):
+                    good_action = True
 
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],1))
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_horizontais,[0,0])
+                    print(pos)
+                    # (2,2)
 
-                ## Atualizar as estruturas
+                    # Adicionar jogada a lista actions
+                    actions.append((pos[0],pos[1],1))
 
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+                    ## Atualizar as estruturas
 
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Eliminar a pos escolhida da lista de adjacentes
-                adj_vert = self.board.adj_verticais[pos]
-                adj_hor = self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
                     
-                if pos in self.board.adj_baixo:
-                    adj_baixa = self.board.adj_baixo[pos]
-                
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
 
-                # Alterar, nas adj verticais, as adjacentes da posicao abaixo
-                if (adj_vert[0]==2):
-                    pos_vert = (pos[0]+1,pos[1])
-                    if pos_vert in self.board.adj_verticais:
-                        self.board.adj_verticais[pos_vert] = [self.board.adj_verticais[pos_vert][0],1]
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
 
-                    if (pos_vert in self.board.adj_cima):
-                        self.board.adj_cima[pos_vert] = [1,self.board.adj_cima[pos_vert][1]]
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
 
-                # Alterar, nas adj verticais, as adjacentes da posicao acima
-                if (adj_vert[1]==2):
-                    pos_vert = (pos[0]-1,pos[1])
-                    self.board.adj_verticais[pos_vert] = [1,self.board.adj_verticais[pos_vert][1]]
-                    if (pos_vert in self.board.adj_baixo):
-                        self.board.adj_baixo[pos_vert] = [1,self.board.adj_baixo[pos_vert][0]]
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
 
-                
-                # Alterar, nas adj cima, as adjacentes da posicao abaixo
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if(adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
-
-                # Alterar, nas adj vaixo, as adjacentes da posicao acima
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
-
-                # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0]+2,pos[1])
-                        if (pos_esquerda in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
-
-                # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_esquerda = (pos[0]+2,pos[1])
-                        if (pos_esquerda in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_esquerda] = [self.board.adj_esquerda[pos_esquerda][0],1]
-
-                print("vert:",self.board.adj_verticais[pos])
-                print("hori:",self.board.adj_horizontais[pos])
-                
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-            elif (self.get_key(self.board.adj_horizontais,[1,1]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_horizontais,[1,1])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],0))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-                # Eliminar a pos escolhida da lista de adjacentes
-                
-                if pos in self.board.adj_verticais:
+                    # Eliminar a pos escolhida da lista de adjacentes
                     adj_vert = self.board.adj_verticais[pos]
+                    adj_hor = self.board.adj_horizontais[pos]
 
-                adj_hor = self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        
+                    if pos in self.board.adj_baixo:
+                        adj_baixa = self.board.adj_baixo[pos]
                     
-                if pos in self.board.adj_baixo:
-                    adj_baixa = self.board.adj_baixo[pos]
-                
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                    
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
 
-                # Alterar, nas adj verticais, as adjacentes da posicao abaixo
-                if (adj_vert[0]==2):
-                    pos_vert = (pos[0]+1,pos[1])
-                    if pos_vert in self.board.adj_verticais:
-                        self.board.adj_verticais[pos_vert] = [self.board.adj_verticais[pos_vert][0],0]
+                    # Alterar, nas adj verticais, as adjacentes da posicao abaixo
+                    if (adj_vert[0]==2):
+                        pos_vert = (pos[0]+1,pos[1])
+                        if pos_vert in self.board.adj_verticais:
+                            self.board.adj_verticais[pos_vert] = [self.board.adj_verticais[pos_vert][0],1]
+
+                        if (pos_vert in self.board.adj_cima):
+                            self.board.adj_cima[pos_vert] = [1,self.board.adj_cima[pos_vert][1]]
+
+                    # Alterar, nas adj verticais, as adjacentes da posicao acima
+                    if (adj_vert[1]==2):
+                        pos_vert = (pos[0]-1,pos[1])
+                        self.board.adj_verticais[pos_vert] = [1,self.board.adj_verticais[pos_vert][1]]
+                        if (pos_vert in self.board.adj_baixo):
+                            self.board.adj_baixo[pos_vert] = [1,self.board.adj_baixo[pos_vert][1]]
+                    
+                    # Alterar, nas adj cima, as adjacentes da posicao abaixo
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if(adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+
+                    # Alterar, nas adj vaixo, as adjacentes da posicao acima
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if (pos_baixo in self.board.adj_cima):
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+
+                    # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if (pos_esquerda in self.board.adj_direita):
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+
+                    # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if (pos_direita in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
+
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_horizontais,[1,1]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_horizontais,[1,1])
+                    print(pos)
+                    # (2,2)
+
+                    # Adicionar jogada a lista actions
+                    
+                    #if pos == (4,10):
+                        #exit()
+                    actions.append((pos[0],pos[1],0))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+                    # Eliminar a pos escolhida da lista de adjacentes
+                    
+                    if pos in self.board.adj_verticais:
+                        adj_vert = self.board.adj_verticais[pos]
+
+                    adj_hor = self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        
+                    if pos in self.board.adj_baixo:
+                        adj_baixa = self.board.adj_baixo[pos]
+                    
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                    
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+
+                    # Alterar, nas adj verticais, as adjacentes da posicao abaixo
+                    if (adj_vert[0]==2):
+                        pos_vert = (pos[0]+1,pos[1])
+                        if pos_vert in self.board.adj_verticais:
+                            self.board.adj_verticais[pos_vert] = [self.board.adj_verticais[pos_vert][0],0]
+
                         if (pos_vert in self.board.adj_cima):
                             self.board.adj_cima[pos_vert] = [0,self.board.adj_cima[pos_vert][1]]
-                
-                # Alterar, nas adj verticais, as adjacentes da posicao acima
-                if (adj_vert[1]==2):
-                    pos_vert = (pos[0]-1,pos[1])
-                    if pos_vert in self.board.adj_verticais:
+
+                    # Alterar, nas adj verticais, as adjacentes da posicao acima
+                    if (adj_vert[1]==2):
+                        pos_vert = (pos[0]-1,pos[1])
                         self.board.adj_verticais[pos_vert] = [0,self.board.adj_verticais[pos_vert][1]]
                         if (pos_vert in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_vert] = [0,self.board.adj_baixo[pos_vert][0]]
-
-                # Alterar, nas adj cima, as adjacentes da posicao abaixo
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if(adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
-
-                # Alterar, nas adj vaixo, as adjacentes da posicao acima
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
-
-                # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0]+2,pos[1])
-                        if (pos_esquerda in self.board.adj_direita):
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+                            self.board.adj_baixo[pos_vert] = [0,self.board.adj_baixo[pos_vert][1]]
 
 
-                # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0]+2,pos[1])
-                        if (pos_direita in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+                    # Alterar, nas adj cima, as adjacentes da posicao abaixo
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if(adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
 
-                print("vert:",self.board.adj_verticais[pos])
-                print("hori:",self.board.adj_horizontais[pos])
+                    # Alterar, nas adj vaixo, as adjacentes da posicao acima
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if (pos_baixo in self.board.adj_cima):
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
+
+                    # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if (pos_esquerda in self.board.adj_direita):
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+
+                    # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if (pos_direita in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+             
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
                 
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
+                elif (self.get_key(self.board.adj_verticais,[0,0]) != None):
+                    good_action = True
 
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_verticais,[0,0])
+                    print(pos)
+                    # (2,2)
 
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
+                    # Adicionar jogada a lista actions
+                    actions.append((pos[0],pos[1],1))
+                    print(actions)
 
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
+                    ## Atualizar as estruturas
 
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-# AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA          adj_verticais,[0,0])       AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-            
-            elif (self.get_key(self.board.adj_verticais,[0,0]) != None):
-                condFlag = True
-                print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n")
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_verticais,[0,0])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],1))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Eliminar a pos escolhida da lista de adjacentes
-                adj_vert = self.board.adj_verticais[pos]
-                adj_hor = self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
                     
-                if pos in self.board.adj_baixo:
-                    adj_baixa = self.board.adj_baixo[pos]
-                
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
 
-                # Alterar, nas adj horizontais, as adjacentes da posicao abaixo
-                if (adj_hor[0]==2):
-                    pos_hor = (pos[0],pos[1]-1)
-                    print(self.board.adj_horizontais[pos_hor])
-                    self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
-                    if (pos_hor in self.board.adj_direita):
-                        self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
-            
-                # Alterar, nas adj verticais, as adjacentes da posicao acima
-                if (adj_hor[1]==2):
-                    pos_hor = (pos[0],pos[1]+1)
-                    self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
 
-                    if (pos_hor in self.board.adj_esquerda):
-                        self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
-                
-                # Alterar, nas adj cima, as adjacentes da posicao abaixo
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if(adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
 
-                # Alterar, nas adj vaixo, as adjacentes da posicao acima
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if pos_baixo in self.board.adj_cima:
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
 
-                # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+                    # Eliminar a pos escolhida da lista de adjacentes
+                    adj_vert = self.board.adj_verticais[pos]
+                    adj_hor = self.board.adj_horizontais[pos]
 
-                # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
-
-                print("vert:",self.board.adj_verticais[pos])
-                print("hori:",self.board.adj_horizontais[pos])
-                
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-            elif (self.get_key(self.board.adj_verticais,[1,1]) != None):
-                condFlag = True
-                print("BBBBBBBBBBBBBBBBBBBBBBBBBBB\n")
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_verticais,[1,1])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],0))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
                         
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Eliminar a pos escolhida da lista de adjacentes
-                adj_vert = self.board.adj_verticais[pos]
-                adj_hor = self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
+                    if pos in self.board.adj_baixo:
+                        adj_baixa = self.board.adj_baixo[pos]
                     
-                if pos in self.board.adj_baixo:
-                    adj_baixa = self.board.adj_baixo[pos]
-                
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                    
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
 
-                # Alterar, nas adj horizontais, as adjacentes da posicao abaixo
-                if (adj_hor[0]==2):
-                    pos_hor = (pos[0],pos[1]-1)
-                    if pos_hor in self.board.adj_horizontais:
+
+                    # Alterar, nas adj horizontais, as adjacentes da posicao abaixo
+                    if (adj_hor[0]==2):
+                        pos_hor = (pos[0],pos[1]-1)
+                        print(self.board.adj_horizontais[pos_hor])
+                        self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
+                        if (pos_hor in self.board.adj_direita):
+                            self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
+                
+                    # Alterar, nas adj verticais, as adjacentes da posicao acima
+                    if (adj_hor[1]==2):
+                        pos_hor = (pos[0],pos[1]+1)
+                        self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+
+                        if (pos_hor in self.board.adj_esquerda):
+                            self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
+                    
+                    # Alterar, nas adj cima, as adjacentes da posicao abaixo
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if(adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+
+                    # Alterar, nas adj vaixo, as adjacentes da posicao acima
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if pos_baixo in self.board.adj_cima:
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+
+                    # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+
+                    # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
+
+                    print("vert:",self.board.adj_verticais[pos])
+                    print("hori:",self.board.adj_horizontais[pos])
+                    
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_verticais,[1,1]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_verticais,[1,1])
+                    print(pos)
+                    # (2,2)
+
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],0))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Eliminar a pos escolhida da lista de adjacentes
+                    adj_vert = self.board.adj_verticais[pos]
+                    adj_hor = self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        
+                    if pos in self.board.adj_baixo:
+                        adj_baixa = self.board.adj_baixo[pos]
+                    
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                    
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+
+                    # Alterar, nas adj horizontais, as adjacentes da posicao abaixo
+                    if (adj_hor[0]==2):
+                        pos_hor = (pos[0],pos[1]-1)
+                        print(self.board.adj_horizontais[pos_hor])
                         self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
                         if (pos_hor in self.board.adj_direita):
                             self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
                 
-                # Alterar, nas adj verticais, as adjacentes da posicao acima
-                if (adj_hor[1]==2):
-                    pos_hor = (pos[0],pos[1]+1)
-                    if pos_hor in self.board.adj_horizontais:
-                        self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
-                        if (pos_hor in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
-                
-                # Alterar, nas adj cima, as adjacentes da posicao abaixo
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if(adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
-
-                # Alterar, nas adj vaixo, as adjacentes da posicao acima
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if pos_baixo in self.board.adj_cima:
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
-
-                # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
-
-                # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
-
-                print("vert:",self.board.adj_verticais[pos])
-                print("hori:",self.board.adj_horizontais[pos])
-                
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-            elif (self.get_key(self.board.adj_cima,[0,0]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_cima,[0,0])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],1))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
-
-                # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[0]==2):
-                        pos_baixo = (pos[0]+1,pos[1])
-                        if pos_baixo in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
-                            if (pos_baixo in self.board.adj_cima):
-                                self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
-            
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
-
-                if pos in self.board.adj_horizontais:
-                    adj_hor = self.board.adj_horizontais[pos]
-                    if (adj_hor[1]==2):
-                        pos_hor = (pos[0],pos[1]+1)
-                        self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
-                        if (pos_hor in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
-                        
-                if pos in self.board.adj_horizontais:
-                        adj_hor = self.board.adj_horizontais[pos]
-                        if (adj_hor[0]==2):
-                            pos_hor = (pos[0],pos[1]-1)
-                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
-                            if (pos_hor in self.board.adj_direita):
-                                self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
-
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
-
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
-
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-    
-            elif (self.get_key(self.board.adj_cima,[1,1]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_cima,[1,1])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],0))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[0]==2):
-                        pos_baixo = (pos[0]+1,pos[1])
-                        if pos_baixo in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
-                            if (pos_baixo in self.board.adj_cima):
-                                self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
-            
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
-
-                if pos in self.board.adj_horizontais:
-                    adj_hor = self.board.adj_horizontais[pos]
+                    # Alterar, nas adj verticais, as adjacentes da posicao acima
                     if (adj_hor[1]==2):
                         pos_hor = (pos[0],pos[1]+1)
                         self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
+
                         if (pos_hor in self.board.adj_esquerda):
                             self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
-                        
-                if pos in self.board.adj_horizontais:
-                        adj_hor = self.board.adj_horizontais[pos]
-                        if (adj_hor[0]==2):
-                            pos_hor = (pos[0],pos[1]-1)
-                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
-                            if (pos_hor in self.board.adj_direita):
-                                self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
-
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
-
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
-
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-    
-            elif (self.get_key(self.board.adj_baixo,[0,0]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_baixo,[0,0])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],1))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
-
-                # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[0]==2):
-                        pos_cima = (pos[0]-1,pos[1])
-                        if pos_cima in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                    
+                    # Alterar, nas adj cima, as adjacentes da posicao abaixo
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if(adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
                             if (pos_cima in self.board.adj_baixo):
-                                self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
-            
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
 
-                if pos in self.board.adj_horizontais:
-                    adj_hor = self.board.adj_horizontais[pos]
-                    if (adj_hor[1]==2):
-                        pos_hor = (pos[0],pos[1]+1)
-                        self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
-                        if (pos_hor in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
-                        
-                if pos in self.board.adj_horizontais:
-                        adj_hor = self.board.adj_horizontais[pos]
-                        if (adj_hor[0]==2):
-                            pos_hor = (pos[0],pos[1]-1)
-                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
-                            if (pos_hor in self.board.adj_direita):
-                                self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
+                    # Alterar, nas adj vaixo, as adjacentes da posicao acima
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if pos_baixo in self.board.adj_cima:
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
 
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
+                    # Alterar, nas adj esqeuerda, as adjacentes da posicao a direiuta
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
 
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+                    # Alterar, nas adj direiuta, as adjacentes da posicao a esquerda
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+                 
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
 
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
 
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
 
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
 
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
 
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
+                    counter-=1
 
-                counter-=1
+                elif (self.get_key(self.board.adj_cima,[0,0]) != None):
+                    good_action = True
 
-            elif (self.get_key(self.board.adj_baixo,[1,1]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_baixo,[1,1])
-                print(pos)
-                # (2,2)
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_cima,[0,0])
+                    print(pos)
+                    # (2,2)
 
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],0))
-                print(actions)
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],1))
+                    print(actions)
 
-                ## Atualizar as estruturas
+                    ## Atualizar as estruturas
 
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[0]==2):
+                            pos_baixo = (pos[0]+1,pos[1])
+                            if pos_baixo in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                                if (pos_baixo in self.board.adj_cima):
+                                    self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
                 
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[0]==2):
-                        pos_cima = (pos[0]-1,pos[1])
-                        if pos_cima in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
-                            if (pos_cima in self.board.adj_baixo):
-                                self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
-            
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
-
-                if pos in self.board.adj_horizontais:
-                    adj_hor = self.board.adj_horizontais[pos]
-                    if (adj_hor[1]==2):
-                        pos_hor = (pos[0],pos[1]+1)
-                        self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
-                        if (pos_hor in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
-                        
-                if pos in self.board.adj_horizontais:
-                        adj_hor = self.board.adj_horizontais[pos]
-                        if (adj_hor[0]==2):
-                            pos_hor = (pos[0],pos[1]-1)
-                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
-                            if (pos_hor in self.board.adj_direita):
-                                self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
-
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
-
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
-
-
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-            elif (self.get_key(self.board.adj_esquerda,[0,0]) != None):
-               
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_esquerda,[0,0])
-                print(pos)
-
-                #if pos == (1,6):
-                #    print("Vou sair\n") 
-               #     exit()
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],1))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos == (1,6):
-                    print(self.board.row_values)
-                    print(self.board.col_values)
-
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
-
-                # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
-
-                if pos == (1,6):
-                    print("\n",self.board.row_values)
-                    print(self.board.col_values)
-                    exit()
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_horizontais:
-                    adj_hor = self.board.adj_horizontais[pos]
-                    if (adj_hor[1]==2):
-                        pos_hor = (pos[0],pos[1]+1)
-                        self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
-                        if (pos_hor in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
-
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[0]==2):
-                        pos_cima = (pos[0]-1,pos[1])
-                        if pos_cima in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
-                            if (pos_cima in self.board.adj_baixo):
-                                self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
-            
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
-
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[0]==2):
-                        pos_baixo = (pos[0]+1,pos[1])
-                        if pos_baixo in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
                             if (pos_baixo in self.board.adj_cima):
-                                self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
-            
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
 
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-            elif (self.get_key(self.board.adj_esquerda,[1,1]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_esquerda,[1,1])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],0))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_horizontais:
-                    adj_hor = self.board.adj_horizontais[pos]
-                    if (adj_hor[1]==2):
-                        pos_hor = (pos[0],pos[1]+1)
-                        self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
-                        if (pos_hor in self.board.adj_esquerda):
-                            self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
-
-                if pos in self.board.adj_direita:
-                    adj_direita = self.board.adj_direita[pos]
-                    if (adj_direita[1]==2):
-                        pos_direita = (pos[0],pos[1]+2)
-                        if pos_direita in self.board.adj_esquerda:
-                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[0]==2):
-                        pos_cima = (pos[0]-1,pos[1])
-                        if pos_cima in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
-                            if (pos_cima in self.board.adj_baixo):
-                                self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
-            
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
-
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[0]==2):
-                        pos_baixo = (pos[0]+1,pos[1])
-                        if pos_baixo in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
-                            if (pos_baixo in self.board.adj_cima):
-                                self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
-            
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
-
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
-
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
-
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
-
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
-
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
-
-                counter-=1
-
-            elif (self.get_key(self.board.adj_direita,[0,0]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_direita,[0,0])
-                print(pos)
-                # (2,2)
-
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],1))
-                print(actions)
-
-                ## Atualizar as estruturas
-
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
-                
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
-
-                # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[0]==2):
-                        pos_cima = (pos[0]-1,pos[1])
-                        if pos_cima in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
-                            if (pos_cima in self.board.adj_baixo):
-                                self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
-            
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
-
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[0]==2):
-                        pos_baixo = (pos[0]+1,pos[1])
-                        if pos_baixo in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
-                            if (pos_baixo in self.board.adj_cima):
-                                self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
-            
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
-
-                if pos in self.board.adj_horizontais:
+                    if pos in self.board.adj_horizontais:
                         adj_hor = self.board.adj_horizontais[pos]
-                        if (adj_hor[0]==2):
-                            pos_hor = (pos[0],pos[1]-1)
-                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
-                            if (pos_hor in self.board.adj_direita):
-                                self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
+                        if (adj_hor[1]==2):
+                            pos_hor = (pos[0],pos[1]+1)
+                            self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+                            if (pos_hor in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
+                            
+                    if pos in self.board.adj_horizontais:
+                            adj_hor = self.board.adj_horizontais[pos]
+                            if (adj_hor[0]==2):
+                                pos_hor = (pos[0],pos[1]-1)
+                                self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
+                                if (pos_hor in self.board.adj_direita):
+                                    self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
 
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
 
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
 
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
 
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
 
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
 
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
 
-                counter-=1
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
 
-            elif (self.get_key(self.board.adj_direita,[1,1]) != None):
-                condFlag = True
-                # Guardar a posicao no tabuleiro
-                pos = self.get_key(self.board.adj_direita,[1,1])
-                print(pos)
-                # (2,2)
+                    counter-=1
+        
+                elif (self.get_key(self.board.adj_cima,[1,1]) != None):
+                    good_action = True
 
-                # Adicionar jogada a lista actions
-                actions.append((pos[0],pos[1],0))
-                print(actions)
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_cima,[1,1])
+                    print(pos)
+                    # (2,2)
 
-                ## Atualizar as estruturas
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],0))
+                    print(actions)
 
-                # Numero de posicoes livres    
-                self.board.num_pos_livres-=1
-                print("Num pos livres: ",self.board.num_pos_livres) 
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[0]==2):
+                            pos_baixo = (pos[0]+1,pos[1])
+                            if pos_baixo in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
+                                if (pos_baixo in self.board.adj_cima):
+                                    self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
                 
-                # Coordenadas das posicoes livres
-                del self.board.coord_pos[pos]
-                print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
-
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
-                self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
-
-                # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
-                self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
-                        
-                print("Zeros e Uns por linha:  ",self.board.row_values)
-                print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
-
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[0]==2):
-                        pos_cima = (pos[0]-1,pos[1])
-                        if pos_cima in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
-                            if (pos_cima in self.board.adj_baixo):
-                                self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
-            
-                if pos in self.board.adj_cima:
-                    adj_cima = self.board.adj_cima[pos]
-                    if (adj_cima[1]==2):
-                        pos_cima = (pos[0]-2,pos[1])
-                        if (pos_cima in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
-
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[0]==2):
-                        pos_baixo = (pos[0]+1,pos[1])
-                        if pos_baixo in self.board.adj_verticais:
-                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
                             if (pos_baixo in self.board.adj_cima):
-                                self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
-            
-                if pos in self.board.adj_baixo:
-                    adj_baixo = self.board.adj_baixo[pos]
-                    if (adj_baixo[1]==2):
-                        pos_baixo = (pos[0]+2,pos[1])
-                        if (pos_baixo in self.board.adj_cima):
-                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
 
-                if pos in self.board.adj_horizontais:
+                    if pos in self.board.adj_horizontais:
                         adj_hor = self.board.adj_horizontais[pos]
-                        if (adj_hor[0]==2):
-                            pos_hor = (pos[0],pos[1]-1)
-                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
-                            if (pos_hor in self.board.adj_direita):
-                                self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
+                        if (adj_hor[1]==2):
+                            pos_hor = (pos[0],pos[1]+1)
+                            self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
+                            if (pos_hor in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
+                            
+                    if pos in self.board.adj_horizontais:
+                            adj_hor = self.board.adj_horizontais[pos]
+                            if (adj_hor[0]==2):
+                                pos_hor = (pos[0],pos[1]-1)
+                                self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
+                                if (pos_hor in self.board.adj_direita):
+                                    self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
 
-                if pos in self.board.adj_esquerda:
-                    adj_esquerda = self.board.adj_esquerda[pos]
-                    if (adj_esquerda[1]==2):
-                        pos_esquerda = (pos[0],pos[1]-2)
-                        if pos_esquerda in self.board.adj_direita:
-                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
 
-                # Porque foi preenchida
-                del self.board.adj_verticais[pos]
-                del self.board.adj_horizontais[pos]
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
 
-                if pos in self.board.adj_cima:
-                    del self.board.adj_cima[pos]
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
 
-                if pos in self.board.adj_baixo:
-                    del self.board.adj_baixo[pos]
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
 
-                if pos in self.board.adj_esquerda:            
-                    del self.board.adj_esquerda[pos]
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
 
-                if pos in self.board.adj_direita:
-                    del self.board.adj_direita[pos]
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
 
-                counter-=1
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
 
-            elif(condFlag == False and twoCheck == False):
-                for num_linha,valores_linha in self.board.row_values.items():
-                    if (valores_linha[0] == lim) and (valores_linha[1] != lim):
-                        posicao = []
-                        for key in self.board.coord_pos:
-                            if key[0] == num_linha:
-                                actions.append((key[0],key[1],1))
-                                posicao.append(key)
-                                self.board.num_pos_livres-=1
-                                counter-=1
+                    counter-=1
+        
+                elif (self.get_key(self.board.adj_baixo,[0,0]) != None):
+                    good_action = True
 
-                                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                                self.board.row_values[key[0]] = [self.board.row_values[key[0]][0],self.board.row_values[key[0]][1]+1]
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_baixo,[0,0])
+                    print(pos)
+                    # (2,2)
 
-                                # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
-                                self.board.col_values[key[1]] = [self.board.col_values[key[1]][0],self.board.col_values[key[1]][1]+1]
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],1))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[0]==2):
+                            pos_cima = (pos[0]-1,pos[1])
+                            if pos_cima in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                                if (pos_cima in self.board.adj_baixo):
+                                    self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
+                
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+
+                    if pos in self.board.adj_horizontais:
+                        adj_hor = self.board.adj_horizontais[pos]
+                        if (adj_hor[1]==2):
+                            pos_hor = (pos[0],pos[1]+1)
+                            self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+                            if (pos_hor in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
+                            
+                    if pos in self.board.adj_horizontais:
+                            adj_hor = self.board.adj_horizontais[pos]
+                            if (adj_hor[0]==2):
+                                pos_hor = (pos[0],pos[1]-1)
+                                self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
+                                if (pos_hor in self.board.adj_direita):
+                                    self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
+
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
+
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_baixo,[1,1]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_baixo,[1,1])
+                    print(pos)
+                    # (2,2)
+
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],0))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[0]==2):
+                            pos_cima = (pos[0]-1,pos[1])
+                            if pos_cima in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
+                                if (pos_cima in self.board.adj_baixo):
+                                    self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
+                
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
+
+                    if pos in self.board.adj_horizontais:
+                        adj_hor = self.board.adj_horizontais[pos]
+                        if (adj_hor[1]==2):
+                            pos_hor = (pos[0],pos[1]+1)
+                            self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
+                            if (pos_hor in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
+                            
+                    if pos in self.board.adj_horizontais:
+                            adj_hor = self.board.adj_horizontais[pos]
+                            if (adj_hor[0]==2):
+                                pos_hor = (pos[0],pos[1]-1)
+                                self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
+                                if (pos_hor in self.board.adj_direita):
+                                    self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
+
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+
+
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_esquerda,[0,0]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_esquerda,[0,0])
+                    print(pos)
+
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],1))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos == (1,6):
+                        print(self.board.row_values)
+                        print(self.board.col_values)
+
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
+
+                    #if pos == (1,6):
+                        #print("\n",self.board.row_values)
+                        #print(self.board.col_values)
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_horizontais:
+                        adj_hor = self.board.adj_horizontais[pos]
+                        if (adj_hor[1]==2):
+                            pos_hor = (pos[0],pos[1]+1)
+                            self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+                            if (pos_hor in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
+
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[0]==2):
+                            pos_cima = (pos[0]-1,pos[1])
+                            if pos_cima in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                                if (pos_cima in self.board.adj_baixo):
+                                    self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
+                
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[0]==2):
+                            pos_baixo = (pos[0]+1,pos[1])
+                            if pos_baixo in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                                if (pos_baixo in self.board.adj_cima):
+                                    self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
+                
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if (pos_baixo in self.board.adj_cima):
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_esquerda,[1,1]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_esquerda,[1,1])
+                    print(pos)
+                    # (2,2)
+
+                    # Adicionar jogada a lista actions
+ 
+                    actions.append((pos[0],pos[1],0))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_horizontais:
+                        adj_hor = self.board.adj_horizontais[pos]
+                        if (adj_hor[1]==2):
+                            pos_hor = (pos[0],pos[1]+1)
+                            self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
+                            if (pos_hor in self.board.adj_esquerda):
+                                self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
+
+                    if pos in self.board.adj_direita:
+                        adj_direita = self.board.adj_direita[pos]
+                        if (adj_direita[1]==2):
+                            pos_direita = (pos[0],pos[1]+2)
+                            if pos_direita in self.board.adj_esquerda:
+                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[0]==2):
+                            pos_cima = (pos[0]-1,pos[1])
+                            if pos_cima in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
+                                if (pos_cima in self.board.adj_baixo):
+                                    self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
+                
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
+
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[0]==2):
+                            pos_baixo = (pos[0]+1,pos[1])
+                            if pos_baixo in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
+                                if (pos_baixo in self.board.adj_cima):
+                                    self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
+                
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if (pos_baixo in self.board.adj_cima):
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
+
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_direita,[0,0]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_direita,[0,0])
+                    print(pos)
+                    # (2,2)
+
+                    # Adicionar jogada a lista actions
+                    actions.append((pos[0],pos[1],1))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0],self.board.row_values[pos[0]][1]+1]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0],self.board.col_values[pos[1]][1]+1]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[0]==2):
+                            pos_cima = (pos[0]-1,pos[1])
+                            if pos_cima in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                                if (pos_cima in self.board.adj_baixo):
+                                    self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
+                
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[0]==2):
+                            pos_baixo = (pos[0]+1,pos[1])
+                            if pos_baixo in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                                if (pos_baixo in self.board.adj_cima):
+                                    self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
+                
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if (pos_baixo in self.board.adj_cima):
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+
+                    if pos in self.board.adj_horizontais:
+                            adj_hor = self.board.adj_horizontais[pos]
+                            if (adj_hor[0]==2):
+                                pos_hor = (pos[0],pos[1]-1)
+                                self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
+                                if (pos_hor in self.board.adj_direita):
+                                    self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
+
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+
+                elif (self.get_key(self.board.adj_direita,[1,1]) != None):
+                    good_action = True
+
+                    # Guardar a posicao no tabuleiro
+                    pos = self.get_key(self.board.adj_direita,[1,1])
+                    print(pos)
+                    # (2,2)
+
+                    # Adicionar jogada a lista actions
+                    actions.append((pos[0],pos[1],0))
+                    print(actions)
+
+                    ## Atualizar as estruturas
+
+                    # Numero de posicoes livres    
+                    self.board.num_pos_livres-=1
+                    print("Num pos livres: ",self.board.num_pos_livres) 
+                    
+                    # Coordenadas das posicoes livres
+                    del self.board.coord_pos[pos]
+                    print("Coordenadas pos livres: ",self.board.coord_pos,"\n")
+
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um 
+                    self.board.row_values[pos[0]] = [self.board.row_values[pos[0]][0]+1,self.board.row_values[pos[0]][1]]
+
+                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                          # Um
+                    self.board.col_values[pos[1]] = [self.board.col_values[pos[1]][0]+1,self.board.col_values[pos[1]][1]]
+                            
+                    print("Zeros e Uns por linha:  ",self.board.row_values)
+                    print("Zeros e Uns por coluna: ",self.board.col_values,"\n")
+
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[0]==2):
+                            pos_cima = (pos[0]-1,pos[1])
+                            if pos_cima in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
+                                if (pos_cima in self.board.adj_baixo):
+                                    self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
+                
+                    if pos in self.board.adj_cima:
+                        adj_cima = self.board.adj_cima[pos]
+                        if (adj_cima[1]==2):
+                            pos_cima = (pos[0]-2,pos[1])
+                            if (pos_cima in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
+
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[0]==2):
+                            pos_baixo = (pos[0]+1,pos[1])
+                            if pos_baixo in self.board.adj_verticais:
+                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
+                                if (pos_baixo in self.board.adj_cima):
+                                    self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
+                
+                    if pos in self.board.adj_baixo:
+                        adj_baixo = self.board.adj_baixo[pos]
+                        if (adj_baixo[1]==2):
+                            pos_baixo = (pos[0]+2,pos[1])
+                            if (pos_baixo in self.board.adj_cima):
+                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
+
+                    if pos in self.board.adj_horizontais:
+                            adj_hor = self.board.adj_horizontais[pos]
+                            if (adj_hor[0]==2):
+                                pos_hor = (pos[0],pos[1]-1)
+                                self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
+                                if (pos_hor in self.board.adj_direita):
+                                    self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
+
+                    if pos in self.board.adj_esquerda:
+                        adj_esquerda = self.board.adj_esquerda[pos]
+                        if (adj_esquerda[1]==2):
+                            pos_esquerda = (pos[0],pos[1]-2)
+                            if pos_esquerda in self.board.adj_direita:
+                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+
+                    # Porque foi preenchida
+                    del self.board.adj_verticais[pos]
+                    del self.board.adj_horizontais[pos]
+
+                    if pos in self.board.adj_cima:
+                        del self.board.adj_cima[pos]
+
+                    if pos in self.board.adj_baixo:
+                        del self.board.adj_baixo[pos]
+
+                    if pos in self.board.adj_esquerda:            
+                        del self.board.adj_esquerda[pos]
+
+                    if pos in self.board.adj_direita:
+                        del self.board.adj_direita[pos]
+
+                    counter-=1
+                
+                else:
+                    print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n")
+                    for num_linha,valores_linha in self.board.row_values.items():
+                        if (valores_linha[0] == lim) and (valores_linha[1] < lim):
+                            posicao = []
+                            for key in self.board.coord_pos:
+                                if key[0] == num_linha:
+                                    actions.append((key[0],key[1],1))
+                                    posicao.append(key)
+                                    self.board.num_pos_livres-=1
+                                    counter-=1
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                                    self.board.row_values[key[0]] = [self.board.row_values[key[0]][0],self.board.row_values[key[0]][1]+1]
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
+                                    self.board.col_values[key[1]] = [self.board.col_values[key[1]][0],self.board.col_values[key[1]][1]+1]
+                                    
+                                    # ATUALIZAR
+
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[0]==2):
+                                            pos_cima = (key[0]-1,key[1])
+                                            if pos_cima in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                                                if (pos_cima in self.board.adj_baixo):
+                                                    self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
                                 
-                                # ATUALIZAR
-
-                                if key in self.board.adj_cima:
-                                    adj_cima = self.board.adj_cima[key]
-                                    if (adj_cima[0]==2):
-                                        pos_cima = (key[0]-1,key[1])
-                                        if pos_cima in self.board.adj_verticais:
-                                            self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[1]==2):
+                                            pos_cima = (key[0]-2,key[1])
                                             if (pos_cima in self.board.adj_baixo):
-                                                self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
-                            
-                                if key in self.board.adj_cima:
-                                    adj_cima = self.board.adj_cima[key]
-                                    if (adj_cima[1]==2):
-                                        pos_cima = (key[0]-2,key[1])
-                                        if (pos_cima in self.board.adj_baixo):
-                                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
+                                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
 
-                                if key in self.board.adj_baixo:
-                                    adj_baixo = self.board.adj_baixo[key]
-                                    if (adj_baixo[0]==2):
-                                        pos_baixo = (key[0]+1,key[1])
-                                        if pos_baixo in self.board.adj_verticais:
-                                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[0]==2):
+                                            pos_baixo = (key[0]+1,key[1])
+                                            if pos_baixo in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                                                if (pos_baixo in self.board.adj_cima):
+                                                    self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
+                                
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[1]==2):
+                                            pos_baixo = (key[0]+2,key[1])
                                             if (pos_baixo in self.board.adj_cima):
-                                                self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
-                            
-                                if key in self.board.adj_baixo:
-                                    adj_baixo = self.board.adj_baixo[key]
-                                    if (adj_baixo[1]==2):
-                                        pos_baixo = (key[0]+2,key[1])
-                                        if (pos_baixo in self.board.adj_cima):
-                                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
+                                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
 
-                                if key in self.board.adj_verticais:
-                                    del self.board.adj_verticais[key]
-                                                                
-                                if key in self.board.adj_horizontais:
-                                    del self.board.adj_horizontais[key]
-
-                                if key in self.board.adj_cima:
-                                    del self.board.adj_cima[key]
-
-                                if key in self.board.adj_baixo:
-                                    del self.board.adj_baixo[key]
-
-                                if key in self.board.adj_esquerda:            
-                                    del self.board.adj_esquerda[key]
-
-                                if key in self.board.adj_direita:
-                                    del self.board.adj_direita[key]
-
-
-                        if (posicao != []):
-                            del self.board.coord_pos[posicao[0]]
-
-
-                    if (valores_linha[0] != lim) and (valores_linha[1] == lim):
-                        posicao = []
-                        for key in self.board.coord_pos:
-                            if key[0] == num_linha:
-                                actions.append((key[0],key[1],0))
-                                posicao.append(key)
-                                self.board.num_pos_livres-=1
-                                counter-=1
-
-                                # Valores de 0 e 1 na linha   =       # Zeros (+1)                      # Um
-                                self.board.row_values[key[0]] = [self.board.row_values[key[0]][0]+1,self.board.row_values[key[0]][1]]
-
-                                # Valores de 0 e 1 na linha   =       # Zeros  (+1)                     # Um
-                                self.board.col_values[key[1]] = [self.board.col_values[key[1]][0]+1,self.board.col_values[key[1]][1]]
-
-                                # ATUALIZAR
-
-                                if key in self.board.adj_cima:
-                                    adj_cima = self.board.adj_cima[key]
-                                    if (adj_cima[0]==2):
-                                        pos_cima = (key[0]-1,key[1])
-                                        if pos_cima in self.board.adj_verticais:
-                                            self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
-                                            if (pos_cima in self.board.adj_baixo):
-                                                self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
-                            
-                                if key in self.board.adj_cima:
-                                    adj_cima = self.board.adj_cima[key]
-                                    if (adj_cima[1]==2):
-                                        pos_cima = (key[0]-2,key[1])
-                                        if (pos_cima in self.board.adj_baixo):
-                                            self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
-
-                                if key in self.board.adj_baixo:
-                                    adj_baixo = self.board.adj_baixo[key]
-                                    if (adj_baixo[0]==2):
-                                        pos_baixo = (key[0]+1,key[1])
-                                        if pos_baixo in self.board.adj_verticais:
-                                            self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
-                                            if (pos_baixo in self.board.adj_cima):
-                                                self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
-                            
-                                if key in self.board.adj_baixo:
-                                    adj_baixo = self.board.adj_baixo[key]
-                                    if (adj_baixo[1]==2):
-                                        pos_baixo = (key[0]+2,key[1])
-                                        if (pos_baixo in self.board.adj_cima):
-                                            self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
-
-                                if key in self.board.adj_verticais:
-                                    del self.board.adj_verticais[key]
-                                                                
-                                if key in self.board.adj_horizontais:
-                                    del self.board.adj_horizontais[key]
-
-                                if key in self.board.adj_cima:
-                                    del self.board.adj_cima[key]
-
-                                if key in self.board.adj_baixo:
-                                    del self.board.adj_baixo[key]
-
-                                if key in self.board.adj_esquerda:            
-                                    del self.board.adj_esquerda[key]
-
-                                if key in self.board.adj_direita:
-                                    del self.board.adj_direita[key]
-
-
-                        if (posicao != []):
-                            del self.board.coord_pos[posicao[0]]
-
-                for num_coluna,valores_coluna in self.board.col_values.items():
-                    if (valores_coluna[0] == lim) and (valores_coluna[1] != lim):
-                        posicao = []
-                        for key in self.board.coord_pos:
-                            if key[1] == num_coluna:
-                                actions.append((key[0],key[1],1))
-                                posicao.append(key)
-                                self.board.num_pos_livres-=1
-                                counter-=1
-
-                                # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
-                                self.board.row_values[key[0]] = [self.board.row_values[key[0]][0],self.board.row_values[key[0]][1]+1]
-
-                                # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
-                                self.board.col_values[key[1]] = [self.board.col_values[key[1]][0],self.board.col_values[key[1]][1]+1]
-
-
-                                # ATUALIZAR
-
-                                if key in self.board.adj_horizontais:
-                                    adj_hor = self.board.adj_horizontais[key]
-                                    if (adj_hor[1]==2):
-                                        pos_hor = (key[0],key[1]+1)
-                                        self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
-                                        if (pos_hor in self.board.adj_esquerda):
-                                            self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
-                                        
-                                if key in self.board.adj_horizontais:
+                                    if key in self.board.adj_horizontais:
                                         adj_hor = self.board.adj_horizontais[key]
                                         if (adj_hor[0]==2):
                                             pos_hor = (key[0],key[1]-1)
@@ -1773,74 +1658,105 @@ class Takuzu(Problem):
                                             if (pos_hor in self.board.adj_direita):
                                                 self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
 
-                                if key in self.board.adj_direita:
-                                    adj_direita = self.board.adj_direita[key]
-                                    if (adj_direita[1]==2):
-                                        pos_direita = (key[0],key[1]+2)
-                                        if pos_direita in self.board.adj_esquerda:
-                                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
-
-                                if key in self.board.adj_esquerda:
-                                    adj_esquerda = self.board.adj_esquerda[key]
-                                    if (adj_esquerda[1]==2):
-                                        pos_esquerda = (key[0],key[1]-2)
-                                        if pos_esquerda in self.board.adj_direita:
-                                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
-
-
-                                if key in self.board.adj_verticais:
-                                    del self.board.adj_verticais[key]
-                                                                
-                                if key in self.board.adj_horizontais:
-                                    del self.board.adj_horizontais[key]
-
-                                if key in self.board.adj_cima:
-                                    del self.board.adj_cima[key]
-
-                                if key in self.board.adj_baixo:
-                                    del self.board.adj_baixo[key]
-
-                                if key in self.board.adj_esquerda:            
-                                    del self.board.adj_esquerda[key]
-
-                                if key in self.board.adj_direita:
-                                    del self.board.adj_direita[key]
-
-
-                        if (posicao != []):
-                            del self.board.coord_pos[posicao[0]]
-
-                    if (valores_coluna[0] != lim) and (valores_coluna[1] == lim):
-                        posicao = []
-                        for key in self.board.coord_pos:
-                            if key[1] == num_coluna:
-                                actions.append((key[0],key[1],0))
-                                posicao.append(key)
-
-                                if key == (1,4):
-                                    print("Prints de Debug\n")
+                                    if key in self.board.adj_esquerda:
+                                        adj_esquerda = self.board.adj_esquerda[key]
+                                        if (adj_esquerda[1]==2):
+                                            pos_esquerda = (key[0],key[1]-2)
+                                            if pos_esquerda in self.board.adj_direita:
+                                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
                                     
-                                self.board.num_pos_livres-=1
-                                counter-=1
+                                    if key in self.board.adj_horizontais:
+                                        adj_hor = self.board.adj_horizontais[key]
+                                        if (adj_hor[1]==2):
+                                            pos_hor = (key[0],key[1]+1)
+                                            self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+                                            if (pos_hor in self.board.adj_esquerda):
+                                                self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
+
+                                    if key in self.board.adj_direita:
+                                        adj_direita = self.board.adj_direita[key]
+                                        if (adj_direita[1]==2):
+                                            pos_direita = (key[0],key[1]+2)
+                                            if pos_direita in self.board.adj_esquerda:
+                                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
 
 
-                                # Valores de 0 e 1 na linha   =       # Zeros (+1)                      # Um
-                                self.board.row_values[key[0]] = [self.board.row_values[key[0]][0]+1,self.board.row_values[key[0]][1]]
 
-                                # Valores de 0 e 1 na linha   =       # Zeros  (+1)                     # Um
-                                self.board.col_values[key[1]] = [self.board.col_values[key[1]][0]+1,self.board.col_values[key[1]][1]]
 
-                                # ATUALIZAR
+                                    if key in self.board.adj_verticais:
+                                        del self.board.adj_verticais[key]
+                                                                    
+                                    if key in self.board.adj_horizontais:
+                                        del self.board.adj_horizontais[key]
+
+                                    if key in self.board.adj_cima:
+                                        del self.board.adj_cima[key]
+
+                                    if key in self.board.adj_baixo:
+                                        del self.board.adj_baixo[key]
+
+                                    if key in self.board.adj_esquerda:            
+                                        del self.board.adj_esquerda[key]
+
+                                    if key in self.board.adj_direita:
+                                        del self.board.adj_direita[key]
+
+
+                            if (posicao != []):
+                                good_action = True
+                                for i in posicao:
+                                    del self.board.coord_pos[i]
+
+
+                        if (valores_linha[0] < lim) and (valores_linha[1] == lim):
+                            posicao = []
+                            for key in self.board.coord_pos:
+                                if key[0] == num_linha:
+                                    actions.append((key[0],key[1],0))
+                                    posicao.append(key)
+                                    self.board.num_pos_livres-=1
+                                    counter-=1
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                      # Um
+                                    self.board.row_values[key[0]] = [self.board.row_values[key[0]][0]+1,self.board.row_values[key[0]][1]]
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros  (+1)                     # Um
+                                    self.board.col_values[key[1]] = [self.board.col_values[key[1]][0]+1,self.board.col_values[key[1]][1]]
+
+                                    # ATUALIZAR
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[0]==2):
+                                            pos_cima = (key[0]-1,key[1])
+                                            if pos_cima in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
+                                                if (pos_cima in self.board.adj_baixo):
+                                                    self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
                                 
-                                if key in self.board.adj_horizontais:
-                                    adj_hor = self.board.adj_horizontais[key]
-                                    if (adj_hor[1]==2):
-                                        pos_hor = (key[0],key[1]+1)
-                                        self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
-                                        if (pos_hor in self.board.adj_esquerda):
-                                            self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
-                                        
-                                if key in self.board.adj_horizontais:
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[1]==2):
+                                            pos_cima = (key[0]-2,key[1])
+                                            if (pos_cima in self.board.adj_baixo):
+                                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
+
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[0]==2):
+                                            pos_baixo = (key[0]+1,key[1])
+                                            if pos_baixo in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
+                                                if (pos_baixo in self.board.adj_cima):
+                                                    self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
+                                
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[1]==2):
+                                            pos_baixo = (key[0]+2,key[1])
+                                            if (pos_baixo in self.board.adj_cima):
+                                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
+
+                                    if key in self.board.adj_horizontais:
                                         adj_hor = self.board.adj_horizontais[key]
                                         if (adj_hor[0]==2):
                                             pos_hor = (key[0],key[1]-1)
@@ -1848,60 +1764,280 @@ class Takuzu(Problem):
                                             if (pos_hor in self.board.adj_direita):
                                                 self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
 
-                                if key == (1,4):
-                                    print(self.board.adj_esquerda,"\n")
+                                    if key in self.board.adj_esquerda:
+                                        adj_esquerda = self.board.adj_esquerda[key]
+                                        if (adj_esquerda[1]==2):
+                                            pos_esquerda = (key[0],key[1]-2)
+                                            if pos_esquerda in self.board.adj_direita:
+                                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+                                    
+                                    if key in self.board.adj_horizontais:
+                                        adj_hor = self.board.adj_horizontais[key]
+                                        if (adj_hor[1]==2):
+                                            pos_hor = (key[0],key[1]+1)
+                                            self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
+                                            if (pos_hor in self.board.adj_esquerda):
+                                                self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
 
-                                if key in self.board.adj_direita:
-                                    adj_direita = self.board.adj_direita[key]
-                                    print(adj_direita)
-                                    if (adj_direita[1]==2):
-                                        pos_direita = (key[0],key[1]+2)
-                                        print(pos_direita)
-                                        if pos_direita in self.board.adj_esquerda:
-                                            self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+                                    if key in self.board.adj_direita:
+                                        adj_direita = self.board.adj_direita[key]
+                                        if (adj_direita[1]==2):
+                                            pos_direita = (key[0],key[1]+2)
+                                            if pos_direita in self.board.adj_esquerda:
+                                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+
+                                    if key in self.board.adj_verticais:
+                                        del self.board.adj_verticais[key]
+                                                                    
+                                    if key in self.board.adj_horizontais:
+                                        del self.board.adj_horizontais[key]
+
+                                    if key in self.board.adj_cima:
+                                        del self.board.adj_cima[key]
+
+                                    if key in self.board.adj_baixo:
+                                        del self.board.adj_baixo[key]
+
+                                    if key in self.board.adj_esquerda:            
+                                        del self.board.adj_esquerda[key]
+
+                                    if key in self.board.adj_direita:
+                                        del self.board.adj_direita[key]
+
+
+                            if (posicao != []):
+                                good_action = True
+                                for i in posicao:
+                                    del self.board.coord_pos[i]
+
+                    for num_coluna,valores_coluna in self.board.col_values.items():
+                        if (valores_coluna[0] == lim) and (valores_coluna[1] < lim):
+                            posicao = []
+                            for key in self.board.coord_pos:
+                                if key[1] == num_coluna:
+                                    actions.append((key[0],key[1],1))
+                                    posicao.append(key)
+                                    self.board.num_pos_livres-=1
+                                    counter-=1
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros                           # Um (+1)
+                                    self.board.row_values[key[0]] = [self.board.row_values[key[0]][0],self.board.row_values[key[0]][1]+1]
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros                         # Um (+1) 
+                                    self.board.col_values[key[1]] = [self.board.col_values[key[1]][0],self.board.col_values[key[1]][1]+1]
+
+
+                                     # ATUALIZAR
+
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[0]==2):
+                                            pos_cima = (key[0]-1,key[1])
+                                            if pos_cima in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_cima] = [1,self.board.adj_verticais[pos_cima][1]]
+                                                if (pos_cima in self.board.adj_baixo):
+                                                    self.board.adj_baixo[pos_cima] = [1,self.board.adj_baixo[pos_cima][1]]
                                 
-                               # if key == (1,4):
-                                   # print(self.board.adj_esquerda,"\n")
-                                   # exit()
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[1]==2):
+                                            pos_cima = (key[0]-2,key[1])
+                                            if (pos_cima in self.board.adj_baixo):
+                                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],1]
 
-                                if key in self.board.adj_esquerda:
-                                    adj_esquerda = self.board.adj_esquerda[key]
-                                    if (adj_esquerda[1]==2):
-                                        pos_esquerda = (key[0],key[1]-2)
-                                        if pos_esquerda in self.board.adj_direita:
-                                            self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[0]==2):
+                                            pos_baixo = (key[0]+1,key[1])
+                                            if pos_baixo in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],1]
+                                                if (pos_baixo in self.board.adj_cima):
+                                                    self.board.adj_cima[pos_baixo] = [1,self.board.adj_cima[pos_baixo][1]]
+                                
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[1]==2):
+                                            pos_baixo = (key[0]+2,key[1])
+                                            if (pos_baixo in self.board.adj_cima):
+                                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],1]
 
-                                if key in self.board.adj_verticais:
-                                    del self.board.adj_verticais[key]
-                                                                
-                                if key in self.board.adj_horizontais:
-                                    del self.board.adj_horizontais[key]
+                                    if key in self.board.adj_horizontais:
+                                        adj_hor = self.board.adj_horizontais[key]
+                                        if (adj_hor[0]==2):
+                                            pos_hor = (key[0],key[1]-1)
+                                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
+                                            if (pos_hor in self.board.adj_direita):
+                                                self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
 
-                                if key in self.board.adj_cima:
-                                    del self.board.adj_cima[key]
+                                    if key in self.board.adj_esquerda:
+                                        adj_esquerda = self.board.adj_esquerda[key]
+                                        if (adj_esquerda[1]==2):
+                                            pos_esquerda = (key[0],key[1]-2)
+                                            if pos_esquerda in self.board.adj_direita:
+                                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],1]
+                                    
+                                    if key in self.board.adj_horizontais:
+                                        adj_hor = self.board.adj_horizontais[key]
+                                        if (adj_hor[1]==2):
+                                            pos_hor = (key[0],key[1]+1)
+                                            self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
+                                            if (pos_hor in self.board.adj_esquerda):
+                                                self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
 
-                                if key in self.board.adj_baixo:
-                                    del self.board.adj_baixo[key]
+                                    if key in self.board.adj_direita:
+                                        adj_direita = self.board.adj_direita[key]
+                                        if (adj_direita[1]==2):
+                                            pos_direita = (key[0],key[1]+2)
+                                            if pos_direita in self.board.adj_esquerda:
+                                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],1]
 
-                                if key in self.board.adj_esquerda:            
-                                    del self.board.adj_esquerda[key]
 
-                                if key in self.board.adj_direita:
-                                    del self.board.adj_direita[key]
 
-                        if (posicao != []):
-                            del self.board.coord_pos[posicao[0]]
-                twoCheck = True
+                                    if key in self.board.adj_verticais:
+                                        del self.board.adj_verticais[key]
+                                                                    
+                                    if key in self.board.adj_horizontais:
+                                        del self.board.adj_horizontais[key]
+
+                                    if key in self.board.adj_cima:
+                                        del self.board.adj_cima[key]
+
+                                    if key in self.board.adj_baixo:
+                                        del self.board.adj_baixo[key]
+
+                                    if key in self.board.adj_esquerda:            
+                                        del self.board.adj_esquerda[key]
+
+                                    if key in self.board.adj_direita:
+                                        del self.board.adj_direita[key]
+
+
+                            if (posicao != []):
+                                good_action = True
+                                for i in posicao:
+                                    del self.board.coord_pos[i]
+
+                        if (valores_coluna[0] < lim) and (valores_coluna[1] == lim):
+                            posicao = []
+                            for key in self.board.coord_pos:
+                                if key[1] == num_coluna:
+                                    actions.append((key[0],key[1],0))
+                                    posicao.append(key)
+                                    
+                                    if key == (4,10):
+                                        print("Prints de Debug\n")
+                                        print(valores_coluna)
+                                        print(valores_coluna)
+                                        print(actions)
+                                        #exit()
+                                    self.board.num_pos_livres-=1
+                                    counter-=1
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros (+1)                      # Um
+                                    self.board.row_values[key[0]] = [self.board.row_values[key[0]][0]+1,self.board.row_values[key[0]][1]]
+
+                                    # Valores de 0 e 1 na linha   =       # Zeros  (+1)                     # Um
+                                    self.board.col_values[key[1]] = [self.board.col_values[key[1]][0]+1,self.board.col_values[key[1]][1]]
+
+                                    # ATUALIZAR
+                                    
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[0]==2):
+                                            pos_cima = (key[0]-1,key[1])
+                                            if pos_cima in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_cima] = [0,self.board.adj_verticais[pos_cima][1]]
+                                                if (pos_cima in self.board.adj_baixo):
+                                                    self.board.adj_baixo[pos_cima] = [0,self.board.adj_baixo[pos_cima][1]]
+                                
+                                    if key in self.board.adj_cima:
+                                        adj_cima = self.board.adj_cima[key]
+                                        if (adj_cima[1]==2):
+                                            pos_cima = (key[0]-2,key[1])
+                                            if (pos_cima in self.board.adj_baixo):
+                                                self.board.adj_baixo[pos_cima] = [self.board.adj_baixo[pos_cima][0],0]
+
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[0]==2):
+                                            pos_baixo = (key[0]+1,key[1])
+                                            if pos_baixo in self.board.adj_verticais:
+                                                self.board.adj_verticais[pos_baixo] = [self.board.adj_verticais[pos_baixo][0],0]
+                                                if (pos_baixo in self.board.adj_cima):
+                                                    self.board.adj_cima[pos_baixo] = [0,self.board.adj_cima[pos_baixo][1]]
+                                
+                                    if key in self.board.adj_baixo:
+                                        adj_baixo = self.board.adj_baixo[key]
+                                        if (adj_baixo[1]==2):
+                                            pos_baixo = (key[0]+2,key[1])
+                                            if (pos_baixo in self.board.adj_cima):
+                                                self.board.adj_cima[pos_baixo] = [self.board.adj_cima[pos_baixo][0],0]
+
+                                    if key in self.board.adj_horizontais:
+                                        adj_hor = self.board.adj_horizontais[key]
+                                        if (adj_hor[0]==2):
+                                            pos_hor = (key[0],key[1]-1)
+                                            self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],0]
+                                            if (pos_hor in self.board.adj_direita):
+                                                self.board.adj_direita[pos_hor] = [0,self.board.adj_direita[pos_hor][1]]
+
+                                    if key in self.board.adj_esquerda:
+                                        adj_esquerda = self.board.adj_esquerda[key]
+                                        if (adj_esquerda[1]==2):
+                                            pos_esquerda = (key[0],key[1]-2)
+                                            if pos_esquerda in self.board.adj_direita:
+                                                self.board.adj_direita[pos_esquerda] = [self.board.adj_direita[pos_esquerda][0],0]
+                                    
+                                    if key in self.board.adj_horizontais:
+                                        adj_hor = self.board.adj_horizontais[key]
+                                        if (adj_hor[1]==2):
+                                            pos_hor = (key[0],key[1]+1)
+                                            self.board.adj_horizontais[pos_hor] = [0,self.board.adj_horizontais[pos_hor][1]]
+                                            if (pos_hor in self.board.adj_esquerda):
+                                                self.board.adj_esquerda[pos_hor] = [0,self.board.adj_esquerda[pos_hor][1]]
+
+                                    if key in self.board.adj_direita:
+                                        adj_direita = self.board.adj_direita[key]
+                                        if (adj_direita[1]==2):
+                                            pos_direita = (key[0],key[1]+2)
+                                            if pos_direita in self.board.adj_esquerda:
+                                                self.board.adj_esquerda[pos_direita] = [self.board.adj_esquerda[pos_direita][0],0]
+
+                                    if key in self.board.adj_verticais:
+                                        del self.board.adj_verticais[key]
+                                                                    
+                                    if key in self.board.adj_horizontais:
+                                        del self.board.adj_horizontais[key]
+
+                                    if key in self.board.adj_cima:
+                                        del self.board.adj_cima[key]
+
+                                    if key in self.board.adj_baixo:
+                                        del self.board.adj_baixo[key]
+
+                                    if key in self.board.adj_esquerda:            
+                                        del self.board.adj_esquerda[key]
+
+                                    if key in self.board.adj_direita:
+                                        del self.board.adj_direita[key]
+
+                            if (posicao != []):
+                                good_action = True
+                                for i in posicao:
+                                    del self.board.coord_pos[i]
+                    
             # Talvez faça sentido peneirar as ERRADAS pelo possible action
-            else:
+            if (good_action == False):
                 print("posicoes vazias: ",self.board.coord_pos,"\n")
                 posicao = []
+                print(self.board.coord_pos)
+                #exit()
                 for key in self.board.coord_pos:
-                    if (state.board.possible_actions(key[0],key[1],0) != None):
-                       actions.append((key[0],key[1],0))
+                    #if (state.board.possible_actions(key[0],key[1],0) != None):
+                    actions.append((key[0],key[1],0))
 
-                    if (state.board.possible_actions(key[0],key[1],1) != None):
-                          actions.append((key[0],key[1],1))
+                    #if (state.board.possible_actions(key[0],key[1],1) != None):
+                    actions.append((key[0],key[1],1))
 
                     #actions.append((key[0],key[1],0))
                     #actions.append((key[0],key[1],1))
@@ -1911,14 +2047,13 @@ class Takuzu(Problem):
                 
                 if (posicao != []):
                     for i in posicao:
-                        print(i)
                         del self.board.coord_pos[i]
 
            # print(counter)
                 
-        print("Actions: ",actions)
+        print("Actions:\n",actions)
         print("num de accoes:  ",len(actions))
-        exit()        
+        #exit()        
                 
         print("Pos livres por  linha:   ",self.board.livres_row)
         print("Pos livres por coluna:   ",self.board.livres_col,"\n")
@@ -1997,9 +2132,17 @@ class Takuzu(Problem):
         estão preenchidas com uma sequência de números adjacentes."""
         size = len(state.board.board_lst)
         print("BOARD_LIST(to_str): \n",state.board)
+        print("board string : \n",list(state.board.board_str))
         print("BOARD_LIST: ",state.board.board_lst)
+
+        col_list = []
         for a in range(0,size):
+            col_list_aux = []
             for b in range(0,size):
+                
+                col_list_aux.append(state.board.board_lst[b][a])
+                
+
                 if int(state.board.board_lst[a][b]) == 2:
                     print("POsicao Vazia\n")
                     print(state.board,"\n")
@@ -2007,8 +2150,36 @@ class Takuzu(Problem):
                     return False
                 
                 if (state.board.possible_actions(a,b,int(state.board.board_lst[a][b])) == None):
+                    print("posicao:",a,b)
+                    print(state.board.board_lst,"\n")
+                    print(state.board)
+                    print("coord pos:\n",state.board.coord_pos)
+                    #exit()
                     print("PA: ",state.board.possible_actions(a,b,int(state.board.board_lst[a][b])))
                     return False
+
+            col_list.append(col_list_aux)
+
+        print("COL LIST: ",col_list)
+
+        dup_free = []
+        dup_free_set = set()
+        for x in col_list:
+            if tuple(x) not in dup_free_set:
+                dup_free.append(x)
+                dup_free_set.add(tuple(x))
+        if (len(dup_free) != len(col_list)):
+            return False
+
+        dup_free = []
+        dup_free_set = set()
+        for x in state.board.board_lst:
+            if tuple(x) not in dup_free_set:
+                dup_free.append(x)
+                dup_free_set.add(tuple(x))
+        if (len(dup_free) != len(state.board.board_lst)):
+            return False
+                
         return True
                 
                         
