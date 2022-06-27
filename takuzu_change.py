@@ -327,15 +327,12 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_horizontais,[0,0])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug 1\n")
-                        
-                        
-                        print(actions)
-                        exit()
+
 
                     # Adicionar jogada a lista actions
-                    actions.append((pos[0],pos[1],1))
+
+                    #xau actions.append((pos[0],pos[1],1))
+                    state = self.result(state, (pos[0],pos[1],1))
 
                     ## Atualizar as estruturas
 
@@ -446,19 +443,15 @@ class Takuzu(Problem):
 
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_horizontais,[1,1])
-                    print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug 2\n")
-                        
-                        print(valores_linha)
-                        print(actions)
                     #    exit()
 
                     # Adicionar jogada a lista actions
                     
                     #if pos == (4,10):
                         #exit()
-                    actions.append((pos[0],pos[1],0))
+                    #xau actions.append((pos[0],pos[1],0))
+                    state = self.result(state, (pos[0],pos[1],0))
+                    
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -513,9 +506,10 @@ class Takuzu(Problem):
                     # Alterar, nas adj verticais, as adjacentes da posicao acima
                     if (adj_vert[1]==2):
                         pos_vert = (pos[0]-1,pos[1])
-                        self.board.adj_verticais[pos_vert] = [0,self.board.adj_verticais[pos_vert][1]]
-                        if (pos_vert in self.board.adj_baixo):
-                            self.board.adj_baixo[pos_vert] = [0,self.board.adj_baixo[pos_vert][1]]
+                        if pos_vert in self.board.adj_verticais:
+                            self.board.adj_verticais[pos_vert] = [0,self.board.adj_verticais[pos_vert][1]]
+                            if (pos_vert in self.board.adj_baixo):
+                                self.board.adj_baixo[pos_vert] = [0,self.board.adj_baixo[pos_vert][1]]
 
 
                     # Alterar, nas adj cima, as adjacentes da posicao abaixo
@@ -573,15 +567,10 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_verticais,[0,0])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug 3\n")
-                        
-                        
-                        print(actions)
-                        exit()
 
                     # Adicionar jogada a lista actions
-                    actions.append((pos[0],pos[1],1))
+                    #xau actions.append((pos[0],pos[1],1))
+                    state = self.result(state, (pos[0],pos[1],1))
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -627,7 +616,6 @@ class Takuzu(Problem):
                     # Alterar, nas adj horizontais, as adjacentes da posicao abaixo
                     if (adj_hor[0]==2):
                         pos_hor = (pos[0],pos[1]-1)
-                        print(self.board.adj_horizontais[pos_hor])
                         self.board.adj_horizontais[pos_hor] = [self.board.adj_horizontais[pos_hor][0],1]
                         if (pos_hor in self.board.adj_direita):
                             self.board.adj_direita[pos_hor] = [1,self.board.adj_direita[pos_hor][1]]
@@ -636,7 +624,6 @@ class Takuzu(Problem):
                     if (adj_hor[1]==2):
                         pos_hor = (pos[0],pos[1]+1)
                         self.board.adj_horizontais[pos_hor] = [1,self.board.adj_horizontais[pos_hor][1]]
-
                         if (pos_hor in self.board.adj_esquerda):
                             self.board.adj_esquerda[pos_hor] = [1,self.board.adj_esquerda[pos_hor][1]]
                     
@@ -698,16 +685,11 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_verticais,[1,1])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug 4\n")
-                        
-                        
-                        print(actions)
-                        exit()
 
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],0))
+                    #xau actions.append((pos[0],pos[1],0))
+                    state = self.result(state, (pos[0],pos[1],0))
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -820,16 +802,11 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_cima,[0,0])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug 5\n")
-                        
-                        
-                        print(actions)
-                        exit()
 
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],1))
+                    #xau actions.append((pos[0],pos[1],1))
+                    state = self.result(state, (pos[0],pos[1],1))
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -924,16 +901,12 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_cima,[1,1])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug 6\n")
-                        
-                        
-                        print(actions)
-                        exit()
+
 
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],0))
+                    #xau actions.append((pos[0],pos[1],0))
+                    state = self.result(state, (pos[0],pos[1],0))
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -1028,16 +1001,10 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_baixo,[0,0])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug\n")
-                        
-                        
-                        print(actions)
-                        exit()
-
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],1))
+                    #xau actions.append((pos[0],pos[1],1))
+                    state = self.result(state, (pos[0],pos[1],1))
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -1133,16 +1100,11 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_baixo,[1,1])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug\n")
-                        
-                        
-                        print(actions)
-                        exit()
 
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],0))
+                    #xau actions.append((pos[0],pos[1],0))
+                    state = self.result(state, (pos[0],pos[1],0))                    
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -1241,7 +1203,9 @@ class Takuzu(Problem):
 
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],1))
+    
+                    #xau actions.append((pos[0],pos[1],1))
+                    state = self.result(state, (pos[0],pos[1],1))   
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -1346,16 +1310,10 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_esquerda,[1,1])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug\n")
-                        
-                        
-                        print(actions)
-                        exit()
-
                     # Adicionar jogada a lista actions
  
-                    actions.append((pos[0],pos[1],0))
+                  #xau actions.append((pos[0],pos[1],0))
+                    state = self.result(state, (pos[0],pos[1],0))
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -1451,15 +1409,10 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_direita,[0,0])
                     print(pos)
-                    if pos == (0,2):
-                        print("Prints de Debug\n")
-                        
-                        
-                        print(actions)
-                        exit()
 
                     # Adicionar jogada a lista actions
-                    actions.append((pos[0],pos[1],1))
+                    #xau actions.append((pos[0],pos[1],1))
+                    state = self.result(state, (pos[0],pos[1],1))  
                     print(actions)
 
                     ## Atualizar as estruturas
@@ -1555,19 +1508,10 @@ class Takuzu(Problem):
                     # Guardar a posicao no tabuleiro
                     pos = self.get_key(self.board.adj_direita,[1,1])
                     print(pos)
-                    # (2,2)
-
-
-                    if pos == (0,2):
-                        print("Prints de Debug\n")
-                        
-                        
-                        print(actions)
-                        exit()
-
 
                     # Adicionar jogada a lista actions
-                    actions.append((pos[0],pos[1],0))
+                  #xau actions.append((pos[0],pos[1],0))
+                    state = self.result(state, (pos[0],pos[1],0))
                     print(actions)
 
 
@@ -1667,7 +1611,12 @@ class Takuzu(Problem):
                             posicao = []
                             for key in self.board.coord_pos:
                                 if key[0] == num_linha:
-                                    actions.append((key[0],key[1],1))
+                                    #xau actions.append((key[0],key[1],1))
+                                    state = self.result(state, (key[0],key[1],1))
+
+                                    #xau actions.append((key[0],key[1],1))
+                                    state = self.result(state, (key[0],key[1],1))
+
                                     posicao.append(key)
                                     self.board.num_pos_livres-=1
                                     counter-=1
@@ -1780,7 +1729,8 @@ class Takuzu(Problem):
                             posicao = []
                             for key in self.board.coord_pos:
                                 if key[0] == num_linha:
-                                    actions.append((key[0],key[1],0))
+                                    #xau actions.append((key[0],key[1],0))
+                                    state = self.result(state, (key[0],key[1],0))
                                     posicao.append(key)
                                     self.board.num_pos_livres-=1
                                     counter-=1
@@ -1890,7 +1840,8 @@ class Takuzu(Problem):
                             posicao = []
                             for key in self.board.coord_pos:
                                 if key[1] == num_coluna:
-                                    actions.append((key[0],key[1],1))
+                                    #xau actions.append((key[0],key[1],1))
+                                    state = self.result(state, (key[0],key[1],1))
                                     posicao.append(key)
                                     self.board.num_pos_livres-=1
                                     counter-=1
@@ -2002,7 +1953,8 @@ class Takuzu(Problem):
                             posicao = []
                             for key in self.board.coord_pos:
                                 if key[1] == num_coluna:
-                                    actions.append((key[0],key[1],0))
+                                    #xau actions.append((key[0],key[1],0))
+                                    state = self.result(state, (key[0],key[1],0))
                                     posicao.append(key)
                                     
                                     if key == (0,2):
@@ -2134,7 +2086,7 @@ class Takuzu(Problem):
                 
         print("\nActions:",actions)
         print("num de accoes:  ",len(actions))
-        #exit()        
+        exit()        
                 
         print("Pos livres por  linha:   ",self.board.livres_row)
         print("Pos livres por coluna:   ",self.board.livres_col,"\n")
